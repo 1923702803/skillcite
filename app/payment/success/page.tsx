@@ -8,7 +8,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 export default function PaymentSuccessPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     // 只在浏览器端读取 URL 查询参数，避免构建时的 useSearchParams 限制
@@ -23,23 +22,18 @@ export default function PaymentSuccessPage() {
       return () => clearTimeout(timer)
     }
 
-    const verifyPayment = async () => {
+    // 在后台静默调用一次验证接口，尝试更新数据库中的会员状态
+    const verifyPaymentSilently = async () => {
       try {
-        const res = await fetch(`/api/payment/verify?session_id=${encodeURIComponent(sessionId)}`)
-        const data = await res.json()
-
-        if (!res.ok || !data.success) {
-          setError(data.message || data.error || "验证支付失败，请稍后在会员页刷新重试")
-        }
+        await fetch(`/api/payment/verify?session_id=${encodeURIComponent(sessionId)}`)
       } catch (err) {
         console.error("Verify payment failed:", err)
-        setError("验证支付失败，请稍后在会员页刷新重试")
       } finally {
         setLoading(false)
       }
     }
 
-    verifyPayment()
+    verifyPaymentSilently()
   }, [])
 
   return (
@@ -57,19 +51,13 @@ export default function PaymentSuccessPage() {
         <CardContent className="space-y-4">
           {loading ? (
             <p className="text-center text-muted-foreground">
-              正在验证您的支付并激活会员...
+              正在激活您的会员，请稍候...
             </p>
           ) : (
             <>
-              {error ? (
-                <p className="text-center text-sm text-destructive">
-                  {error}
-                </p>
-              ) : (
-                <p className="text-center text-sm text-muted-foreground">
-                  您的会员已激活，现在可以享受无限次分析功能！
-                </p>
-              )}
+              <p className="text-center text-sm text-muted-foreground">
+                支付已完成，我们会很快为您开通或续期会员。
+              </p>
               <Button
                 className="w-full"
                 onClick={() => router.push('/')}
