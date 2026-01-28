@@ -1,18 +1,21 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default function PaymentSuccessPage() {
   const router = useRouter()
-  const searchParams = useSearchParams()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const sessionId = searchParams.get("session_id")
+    // 只在浏览器端读取 URL 查询参数，避免构建时的 useSearchParams 限制
+    if (typeof window === "undefined") return
+
+    const params = new URLSearchParams(window.location.search)
+    const sessionId = params.get("session_id")
 
     // 如果没有 session_id，就只做一个简单的 loading 结束
     if (!sessionId) {
@@ -37,7 +40,7 @@ export default function PaymentSuccessPage() {
     }
 
     verifyPayment()
-  }, [searchParams])
+  }, [])
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4">
