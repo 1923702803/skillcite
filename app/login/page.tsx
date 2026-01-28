@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { signIn } from "next-auth/react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -20,16 +20,19 @@ type LoginFormData = z.infer<typeof loginSchema>
 
 export default function LoginPage() {
   const router = useRouter()
-  const searchParams = useSearchParams()
   const [error, setError] = useState<string>("")
   const [success, setSuccess] = useState<string>("")
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    if (searchParams.get("registered") === "true") {
+    // 只在浏览器端读取 URL 查询参数，避免构建时的 useSearchParams 限制
+    if (typeof window === "undefined") return
+
+    const params = new URLSearchParams(window.location.search)
+    if (params.get("registered") === "true") {
       setSuccess("注册成功！请使用您的邮箱和密码登录。")
     }
-  }, [searchParams])
+  }, [])
 
   const {
     register,
