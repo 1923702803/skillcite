@@ -10,30 +10,24 @@ export default function PaymentSuccessPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // 只在浏览器端读取 URL 查询参数，避免构建时的 useSearchParams 限制
-    if (typeof window === "undefined") return
-
-    const params = new URLSearchParams(window.location.search)
-    const sessionId = params.get("session_id")
-
-    // 如果没有 session_id，就只做一个简单的 loading 结束
-    if (!sessionId) {
-      const timer = setTimeout(() => setLoading(false), 2000)
-      return () => clearTimeout(timer)
-    }
-
-    // 在后台静默调用一次验证接口，尝试更新数据库中的会员状态
-    const verifyPaymentSilently = async () => {
+    // 在后台静默调用一次激活接口，强制把当前登录用户升级为会员
+    const activateMembershipSilently = async () => {
       try {
-        await fetch(`/api/payment/verify?session_id=${encodeURIComponent(sessionId)}`)
+        await fetch("/api/payment/activate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({}),
+        })
       } catch (err) {
-        console.error("Verify payment failed:", err)
+        console.error("Activate membership failed:", err)
       } finally {
         setLoading(false)
       }
     }
 
-    verifyPaymentSilently()
+    activateMembershipSilently()
   }, [])
 
   return (
