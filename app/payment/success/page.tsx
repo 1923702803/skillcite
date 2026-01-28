@@ -1,15 +1,13 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useSearchParams, useRouter } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default function PaymentSuccessPage() {
-  const searchParams = useSearchParams()
   const router = useRouter()
   const [loading, setLoading] = useState(true)
-  const sessionId = searchParams.get('session_id')
 
   useEffect(() => {
     // 等待几秒让 webhook 处理完成
