@@ -45,30 +45,6 @@ export default function PaymentPage() {
     }
   }
 
-  // 测试功能：手动激活会员（仅开发环境）
-  const handleTestActivate = async () => {
-    if (process.env.NODE_ENV === 'production') return
-    
-    try {
-      const response = await fetch('/api/test/activate-membership', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ months: 1 }),
-      })
-      
-      const data = await response.json()
-      if (response.ok) {
-        alert(`会员已激活！\n${data.message}`)
-        fetchUsageInfo()
-      } else {
-        alert(data.error || '激活失败')
-      }
-    } catch (error) {
-      console.error('激活会员错误:', error)
-      alert('激活失败')
-    }
-  }
-
   const handlePayment = async (planType: 'monthly' | 'yearly') => {
     setLoading(true)
     try {
@@ -181,19 +157,6 @@ export default function PaymentPage() {
                     day: 'numeric'
                   })}
                 </span>
-              </div>
-            )}
-            {/* 测试按钮：手动激活会员（仅开发环境） */}
-            {process.env.NODE_ENV !== 'production' && !usageInfo.isPremium && (
-              <div className="mt-4 pt-4 border-t border-slate-700">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleTestActivate}
-                  className="w-full text-xs"
-                >
-                  🧪 测试：激活会员（1个月）
-                </Button>
               </div>
             )}
           </div>
