@@ -53,18 +53,28 @@ export default function LoginPage() {
         redirect: false,
       })
 
-      if (result?.error) {
-        setError("邮箱或密码错误")
-        setIsLoading(false)
+      if (!result) {
+        setError("登录失败，服务器无响应")
         return
       }
 
-      if (result?.ok) {
+      if (result.error) {
+        setError("邮箱或密码错误")
+        return
+      }
+
+      if (result.ok) {
         router.push("/")
         router.refresh()
+        return
       }
-    } catch (error) {
+
       setError("登录失败，请稍后重试")
+    } catch (error) {
+      console.error("登录异常:", error)
+      setError("登录失败，请稍后重试")
+    } finally {
+      // 无论成功或失败都恢复按钮状态，避免一直显示“登录中...”
       setIsLoading(false)
     }
   }
