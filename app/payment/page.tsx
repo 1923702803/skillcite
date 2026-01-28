@@ -87,17 +87,17 @@ export default function PaymentPage() {
     {
       id: 'monthly' as const,
       name: '月度会员',
-      price: 9.99,
+      price: 30,
       period: '月',
       features: ['无限次分析', '优先处理', '高级功能'],
     },
     {
       id: 'yearly' as const,
       name: '年度会员',
-      price: 99.99,
+      price: 200,
       period: '年',
-      originalPrice: 119.88,
-      features: ['无限次分析', '优先处理', '高级功能', '节省 20%'],
+      originalPrice: 360,
+      features: ['无限次分析', '优先处理', '高级功能', '相比月付节省超过 40%'],
     },
   ]
 
